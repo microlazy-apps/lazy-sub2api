@@ -9,10 +9,23 @@ permissions:
   packages: write
 
 jobs:
+  prep:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - id: v
+        # Strip leading "v" so package.yml carries strict semver (lazycat
+        # /lpk/read_from_cos rejects a "v"-prefixed version).
+        run: |
+          V="${{ github.ref_name }}"
+          echo "version=${V#v}" >> "$GITHUB_OUTPUT"
+
   build:
+    needs: prep
     uses: microlazy-apps/lazycat-ci/.github/workflows/lpk-build.yml@v0.1.0
     with:
-      version:        ${{ github.ref_name }}
+      version:        ${{ needs.prep.outputs.version }}
       docker-context: ./vendor/sub2api
     secrets: inherit
 
