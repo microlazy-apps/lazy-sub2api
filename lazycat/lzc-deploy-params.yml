@@ -1,0 +1,13 @@
+params:
+  - id: ADMIN_EMAIL
+    type: string
+    name: "管理员邮箱"
+    description: "管理员登录邮箱地址"
+    default_value: "admin@sub2api.local"
+    optional: false
+
+  - id: ADMIN_PASSWORD
+    type: string
+    name: "管理员密码"
+    description: "管理员登录密码（至少 8 位）"
+    optional: false

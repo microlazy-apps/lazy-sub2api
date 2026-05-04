@@ -1,0 +1,36 @@
+package: cloud.lazycat.app.sub2api
+version: ${VERSION}
+name: Sub2API
+description: AI API 网关平台，管理和分配 AI 产品订阅的 API 配额
+author: Wei-Shaw
+license: LGPL-3.0
+homepage: https://github.com/microlazy-apps/lazy-sub2api
+locales:
+  zh-CN:
+    name: Sub2API
+    description: AI API 网关平台，管理和分配 AI 产品订阅的 API 配额（如 Claude Code $200/月）。支持多账户管理、API 密钥生成、用量追踪、智能负载均衡等功能。
+    usage: |
+      ## 首次使用
+      1. 使用您配置的管理员邮箱和密码登录
+      2. 在设置中添加上游 AI 服务账户
+      3. 创建 API 密钥分配给用户
+
+      ## 功能特性
+      - 多账户管理（支持 OAuth 和 API 密钥）
+      - Token 级别用量追踪与成本计算
+      - 智能账户选择与会话保持
+      - 可配置的速率限制
+  en:
+    name: Sub2API
+    description: AI API gateway platform for managing and distributing API quotas from AI product subscriptions (e.g., Claude Code $200/month). Features multi-account management, API key generation, usage tracking, and smart load balancing.
+    usage: |
+      ## Getting Started
+      1. Login with your configured admin email and password
+      2. Add upstream AI service accounts in settings
+      3. Create API keys and assign to users
+
+      ## Features
+      - Multi-account management (OAuth & API keys)
+      - Token-level usage tracking and cost calculation
+      - Smart account selection with session affinity
+      - Configurable rate limiting

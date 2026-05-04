@@ -1,0 +1,24 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build:
+    uses: microlazy-apps/lazycat-ci/.github/workflows/lpk-build.yml@v0.1.0
+    with:
+      version:        ${{ github.ref_name }}
+      docker-context: ./vendor/sub2api
+    secrets: inherit
+
+  publish:
+    needs: build
+    uses: microlazy-apps/lazycat-ci/.github/workflows/publish.yml@v0.1.0
+    with:
+      release-tag: ${{ github.ref_name }}
+    secrets: inherit

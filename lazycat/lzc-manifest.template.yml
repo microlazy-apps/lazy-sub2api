@@ -1,0 +1,80 @@
+application:
+  subdomain: sub2api
+  upstreams:
+    - location: /
+      backend: http://main:8080
+  public_path:
+    - /
+  depends_on:
+    - main
+
+services:
+  main:
+    image: ${LAZYCAT_IMAGE}
+    environment:
+      - AUTO_SETUP=true
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8080
+      - SERVER_MODE=release
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=sub2api
+      - DATABASE_PASSWORD={{stable_secret "POSTGRES_PASSWORD"}}
+      - DATABASE_DBNAME=sub2api
+      - DATABASE_SSLMODE=disable
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD={{stable_secret "REDIS_PASSWORD"}}
+      - REDIS_DB=0
+      - ADMIN_EMAIL={{.U.ADMIN_EMAIL}}
+      - ADMIN_PASSWORD={{.U.ADMIN_PASSWORD}}
+      - JWT_SECRET={{stable_secret "JWT_SECRET"}}
+      - JWT_EXPIRE_HOUR=24
+      - TZ=Asia/Shanghai
+    binds:
+      - /lzcapp/var/data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: registry.lazycat.cloud/lee/library/postgres:d5559a95f3e69bb8
+    environment:
+      - POSTGRES_USER=sub2api
+      - POSTGRES_PASSWORD={{stable_secret "POSTGRES_PASSWORD"}}
+      - POSTGRES_DB=sub2api
+      - TZ=Asia/Shanghai
+      - PGDATA=/var/lib/postgresql/data
+    binds:
+      - /lzcapp/var/postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sub2api -d sub2api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redis:
+    image: registry.lazycat.cloud/lee/library/redis:ef2791ca3ea21111
+    command: >
+      redis-server
+      --save 60 1
+      --appendonly yes
+      --appendfsync everysec
+      --requirepass {{stable_secret "REDIS_PASSWORD"}}
+    environment:
+      - TZ=Asia/Shanghai
+    binds:
+      - /lzcapp/var/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "{{stable_secret \"REDIS_PASSWORD\"}}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
