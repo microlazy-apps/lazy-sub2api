@@ -34,7 +34,8 @@ services:
     binds:
       - /lzcapp/var/data:/app/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      # Upstream alpine final stage has no curl; busybox wget is available.
+      test: ["CMD", "wget", "-q", "--spider", "--tries=1", "-T", "5", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 3
